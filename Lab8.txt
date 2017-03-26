@@ -1,0 +1,74 @@
+1. 
+- I set up my experiment by running all three algorithms for arrays of sizes 1 to 2^27. For each size, I run each algorithm 5 times and calculate the total runtime for each. At the beginning of each iteration I shuffle the input array to make sure that the algorithms don't get a particularly good or bad case, and if they do, the other 4 iterations will even out the time. 
+- To test my algorithm, I wrote the extra functions testMerge() and testOrder(). testMerge() will generate an array of random size from 1 to 100, while testOrder() returns false iff the array is not sorted. When the program is invoked with the flag --test, it runs testMerge() for 10 times to further ensure correctness.
+2. Experimental Evidence:
+
+Sample 1:
+
+           Size Mergesort Improved Iterative
+              1     0.00     0.00     0.00 
+              2     0.00     0.00     0.00 
+              4     0.00     0.00     0.00 
+              8     0.00     0.00     0.00 
+             16     0.00     0.00     0.00 
+             32     0.00     0.00     0.00 
+             64     0.00     0.00     0.00 
+            128     0.00     0.00     0.00 
+            256     0.00     0.00     0.00 
+            512     0.00     0.00     0.00 
+           1024     0.00     0.00     0.00 
+           2048     0.00     0.00     0.00 
+           4096     0.00     0.00     0.00 
+           8192     0.01     0.00     0.00 
+          16384     0.01     0.01     0.01 
+          32768     0.02     0.01     0.01 
+          65536     0.05     0.03     0.03 
+         131072     0.10     0.06     0.05 
+         262144     0.20     0.13     0.11 
+         524288     0.41     0.26     0.24 
+        1048576     0.88     0.55     0.52 
+        2097152     1.77     1.15     1.11 
+        4194304     3.70     2.43     2.32 
+        8388608     7.69     5.04     4.86 
+       16777216    16.44    10.86    10.68 
+       33554432    36.82    23.65    22.41 
+       67108864    71.95    52.26    51.24 
+      134217728   161.76   108.73    90.90 
+
+Sample 2:
+
+           Size Mergesort Improved Iterative
+              1     0.00     0.00     0.00 
+              2     0.00     0.00     0.00 
+              4     0.00     0.00     0.00 
+              8     0.00     0.00     0.00 
+             16     0.00     0.00     0.00 
+             32     0.00     0.00     0.00 
+             64     0.00     0.00     0.00 
+            128     0.00     0.00     0.00 
+            256     0.00     0.00     0.00 
+            512     0.00     0.00     0.00 
+           1024     0.00     0.00     0.00 
+           2048     0.00     0.00     0.00 
+           4096     0.00     0.00     0.00 
+           8192     0.01     0.00     0.01 
+          16384     0.01     0.01     0.01 
+          32768     0.02     0.02     0.01 
+          65536     0.06     0.03     0.03 
+         131072     0.10     0.06     0.06 
+         262144     0.20     0.12     0.11 
+         524288     0.41     0.26     0.24 
+        1048576     0.87     0.55     0.52 
+        2097152     1.77     1.13     1.11 
+        4194304     3.68     2.43     2.32 
+        8388608     7.63     5.02     4.86 
+       16777216    15.91    10.61    10.22 
+       33554432    33.15    21.91    20.96 
+       67108864    68.94    46.69    44.40 
+      134217728   145.70    96.33    93.91 
+3. The general observations above, we see that removing memory allocations improved the efficiency of the algorithms by a large margin, and by using the iterative algorithm, we obtain a further, though marginal, improvement. This agrees with my hypothesis proposed before conducting the experiment. By using iterative algorithm, we reduce the overhead associated with storing function variables on the stack as done by recursion, bringing about further improvement.
+
+4. Implementing improved mergesort was relatively straightforward, since we only have to declare an array at the beginning as our scratch place. However slight modifications to the algorithm were needed since we do not have an extra slot to hold INFINITY as described in the book. We instead have to keep track of whether we have emptied either the left or the right subarray of our scratch space so as to move the remaining elements into places.
+Implementing iterative mergesort was much more tricky, since we have to take into account the fact that the length of the array might not be a power of 2, and therefore have to do extra checks to make sure that no elements get left out as we sort the array.
+As for the suggestion to which algorithm should be used, the answer again depends. Iterative mergesort was able to bring about marginal performance improvement, however it is very tricky to implement with a lot of extra variables that, given poor documentation, might not make a lot of sense to people other than the coder. Improved mergesort on the other hand does not deviate from the original design very much. The edge cases are automatically taken care of by the recursive nature. Therefore the answer depends on whether we value the marginal improvement or the time taken for the coder to produce running code.
+ 

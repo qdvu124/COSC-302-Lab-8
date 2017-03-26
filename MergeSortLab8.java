@@ -1,30 +1,5 @@
-import java.util.Arrays;
-import java.util.Random;
-
-
 public class MergeSortLab8 {
 
-	static Random rand = new Random();
-
-	static void randomlyPermute(int[] array) {
-		for (int i = 0; i < array.length; i++)
-		{
-			int randInt = rand.nextInt(array.length-i) + i;
-			int tmp = array[i];
-			array[i] = array[randInt];
-			array[randInt] = tmp;
-		}
-	}
-
-	// Function to generate an int array from 0 to n-1 inclusive
-	static int[] generateArray(int n) {
-		int array[] = new int[n];
-		for(int i = 0; i < n; i++) {
-			array[i] = i;
-		}
-		randomlyPermute(array);
-		return array;
-	}
 
 	// Plain mergesort
 	static void mergesort(int[] a, int left, int right){
@@ -88,30 +63,30 @@ public class MergeSortLab8 {
 				a[i] = scratch[rightIndex];
 				rightIndex++;
 			}
+			// Since we are not using an extra space to store Integer.MAX_VALUE, we have to do some checks here to see if we emptied either of the subarray
 			if(leftIndex > middle) {
 				i++;
-				while(rightIndex <= right) {
-					a[i] = scratch[rightIndex];
-					i++;
-					rightIndex++;
-				}
+				while(rightIndex <= right)
+					a[i++] = scratch[rightIndex++];
 				break;
 			}
 			if(rightIndex > right) {
 				i++;
-				while(leftIndex <= middle) {
-					a[i] = scratch[leftIndex];
-					i++;
-					leftIndex++;
-				}
+				while(leftIndex <= middle)
+					a[i++] = scratch[leftIndex++];
 				break;
 			}
 		}
 	}
 	// End of improved mergesort
 
-	// Iterative mergesort.
+	// Iterative mergesort
 	static void iterativeMergesort(int[] scratch, int[] a) {
+		// Declaring variables:
+		// subLength: Length of the subproblem being considered
+		// rightEnd: The end index of the subproblem being considered. The begin index can be found using rightEnd and subLength
+		// halfLength: For convenience in finding the middle index to pass into improvedMerge
+		// end and begin are used to take care of cases where the length of the array is not a power of 2, hence some elements at the end might have been left unsorted
 		int halfLength, end, begin, rightEnd, subLength;
 		for(subLength = 2; subLength <= a.length; subLength *= 2) {
 			halfLength = subLength / 2;
@@ -136,42 +111,5 @@ public class MergeSortLab8 {
 			improvedMerge(scratch, a, 0, subLength - 1, end);
 		}
 	}
-
-	static boolean testMerge() {
-		final int SIZE = rand.nextInt(99) + 1; // Avoid 0
-		System.out.println("Testing with array of size " + SIZE);
-		int[] testArray = generateArray(SIZE);
-		mergesort(testArray, 0, SIZE - 1);
-		for(int i = 0; i < SIZE; i++) {
-			if(testArray[i] != i)
-				return false;
-		}
-		System.out.println("Plain mergesort is working correctly");
-
-		// Testing improved mergesort
-		int[] scratch = new int[SIZE];
-		randomlyPermute(testArray);
-		improvedMergesort(scratch, testArray, 0, SIZE - 1);
-		for(int i = 0; i < SIZE; i++) {
-			if(testArray[i] != i)
-				return false;
-		}
-		System.out.println("Improved mergesort is working correctly");
-
-		// Testing iterative mergesort
-		scratch = new int[SIZE];
-		randomlyPermute(testArray);
-		iterativeMergesort(scratch, testArray);
-		for(int i = 0; i < SIZE; i++) {
-			if(testArray[i] != i)
-				return false;
-		}
-		System.out.println("Iterative mergesort is working correctly");
-		return true;
-	}
-
-	public static void main(String args[]) {
-		for(int i = 0; i < 50; i++)
-			System.out.println(testMerge() ? "All tests passed!\n" : "Mergesort is not working properly\n");
-	}
+	// End of iterative mergesort
 }
