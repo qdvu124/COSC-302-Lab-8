@@ -110,26 +110,43 @@ public class MergeSortLab8 {
 	}
 	// End of improved mergesort
 
-	// Iterative mergesort. For simplicity, the size of the array is assumed to be a power of 2
-	// Slight modifications are needed for the last merge of each iteration in case the size of the array is not 2
+	// Iterative mergesort.
 	static void iterativeMergesort(int[] scratch, int[] a) {
-		int halfLength;
-		for(int subLength = 2; subLength <= a.length; subLength *= 2) {
+		int halfLength, end, begin, rightEnd, subLength;
+		for(subLength = 2; subLength <= a.length; subLength *= 2) {
 			halfLength = subLength / 2;
-			for(int rightEnd = subLength; rightEnd <= a.length; rightEnd += subLength) {
+			for(rightEnd = subLength; rightEnd <= a.length; rightEnd += subLength) {
 				improvedMerge(scratch, a, rightEnd - subLength, rightEnd - halfLength - 1, rightEnd - 1);
 			}
+			// Taking care in the case of when the length of the array is not a power of 2
+			// Merging the left out array with the previously sorted array
+			if(rightEnd > a.length) {
+				if (rightEnd - subLength >= a.length)
+					continue;
+				end = a.length - 1;
+				begin = rightEnd - 2 * subLength;
+				improvedMerge(scratch, a, begin, begin + subLength - 1, end);
+			}
+		}
+		if(subLength > a.length) {
+			if(subLength / 2 >= a.length)
+				return;
+			subLength =  subLength / 2;
+			end = a.length - 1;
+			improvedMerge(scratch, a, 0, subLength - 1, end);
 		}
 	}
 
 	static boolean testMerge() {
-		final int SIZE = 64;
+		final int SIZE = rand.nextInt(99) + 1; // Avoid 0
+		System.out.println("Testing with array of size " + SIZE);
 		int[] testArray = generateArray(SIZE);
 		mergesort(testArray, 0, SIZE - 1);
 		for(int i = 0; i < SIZE; i++) {
 			if(testArray[i] != i)
 				return false;
 		}
+		System.out.println("Plain mergesort is working correctly");
 
 		// Testing improved mergesort
 		int[] scratch = new int[SIZE];
@@ -139,18 +156,22 @@ public class MergeSortLab8 {
 			if(testArray[i] != i)
 				return false;
 		}
+		System.out.println("Improved mergesort is working correctly");
+
+		// Testing iterative mergesort
 		scratch = new int[SIZE];
 		randomlyPermute(testArray);
 		iterativeMergesort(scratch, testArray);
-		System.out.println(Arrays.toString(testArray));
 		for(int i = 0; i < SIZE; i++) {
 			if(testArray[i] != i)
 				return false;
 		}
+		System.out.println("Iterative mergesort is working correctly");
 		return true;
 	}
 
 	public static void main(String args[]) {
-		System.out.println(testMerge() ? "All tests passed!" : "Mergesort is not working properly");
+		for(int i = 0; i < 50; i++)
+			System.out.println(testMerge() ? "All tests passed!\n" : "Mergesort is not working properly\n");
 	}
 }
